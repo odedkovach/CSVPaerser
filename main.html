@@ -1,0 +1,54 @@
+<script src="CsvParser.js"></script>
+
+<div id="page-wrapper">
+
+    <h1>Test CSV Parser</h1>
+    <div>
+        Select a csv file:
+        <input type="file" id="fileInput">
+    </div>
+    <pre id="fileDisplayArea"><pre>
+    
+        </div>
+
+<script>
+    window.onload = function () {
+        var fileInput = document.getElementById('fileInput');
+        var fileDisplayArea = document.getElementById('fileDisplayArea');
+
+        fileInput.addEventListener('change', function (e) {
+            var file = fileInput.files[0];
+
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+
+                testParser(reader.result); // this function  is the test scenario from the exam
+            }
+
+            reader.readAsText(file);
+
+        });
+    }
+
+    function testParser(csvData) {                  // from the exam
+        console.log("csvData:", csvData)
+        var csv = new CsvParser(csvData);
+        if (!csv.isEmpty) {
+            var count = csv.length;
+            for (var i = 0; i < count; ++i) {
+                var row = csv.getRow(i);
+                console.log(row["time"] + ' ' + row["result"]);
+                if (row.status != 200) console.error("Error: " + row.status);
+            }
+        }
+        // 'matches' is an array of rows
+        var matches = csv.WhereEquals("result", "OK");
+        console.log("WhereEquals:", matches.length)
+        matches = csv.WhereGreaterThan("status", 200);
+        console.log("WhereGreaterThan:", matches.length)
+        matches = csv.WhereLessThan("status", 500);
+        console.log("WhereLessThan:", matches.length)
+    }
+
+</script>
